@@ -6,7 +6,7 @@ import (
 
 	ut "github.com/go-playground/universal-translator"
 	"github.com/go-playground/validator/v10"
-	en_translations "github.com/go-playground/validator/v10/translations/en"
+	enTranslations "github.com/go-playground/validator/v10/translations/en"
 )
 
 var (
@@ -15,13 +15,13 @@ var (
 )
 
 func Validate() (*validator.Validate, ut.Translator) {
-	en := en.New()
-	uni = ut.New(en, en)
+	translator := en.New()
+	uni = ut.New(translator, translator)
 
 	trans, _ := uni.GetTranslator("en")
 
 	validate = validator.New()
-	enTranslation := en_translations.RegisterDefaultTranslations(validate, trans)
+	enTranslation := enTranslations.RegisterDefaultTranslations(validate, trans)
 
 	if enTranslation != nil {
 		panic(enTranslation)

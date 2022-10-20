@@ -30,7 +30,7 @@ type CommentResponse struct {
 	Id        string    `json:"id"`
 	Message   string    `json:"message"`
 	PhotoId   string    `json:"photo_id"`
-	User_Id   string    `json:"user_id"`
+	UserId    string    `json:"user_id"`
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`
 	User      *User     `json:"user"`
