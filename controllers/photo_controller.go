@@ -74,6 +74,10 @@ func (idb *InDB) GetPhoto(ctx *gin.Context) {
 
 	errGetUser := idb.DB.Debug().Table("photos").Preload("User").Find(&photos).Error
 
+	/*errGetUser := idb.DB.Debug().Table("photos").Preload("User", func(db *gorm.DB) *gorm.DB {
+		return db.Order("Username DESC").Select("ID", "Username", "Email")
+	}).Find(&photos).Error*/
+
 	if errGetUser != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{
 			"result":  nil,
