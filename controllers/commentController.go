@@ -11,8 +11,8 @@ import (
 )
 
 type CommentRequest struct {
-	Message  string `json:"message" validate:"required,max=191"`
-	Photo_Id uint   `json:"photo_id" validate:"required"`
+	Message string `json:"message" validate:"required,max=191"`
+	PhotoId uint   `json:"photo_id" validate:"required"`
 }
 
 type UpdateCommentMessage struct {
@@ -20,21 +20,21 @@ type UpdateCommentMessage struct {
 }
 
 type Photo struct {
-	Id        uint   `json:"id"`
-	Title     string `json:"title"`
-	Caption   string `json:"caption"`
-	Photo_url string `json:"photo_url"`
-	User_id   uint   `json:"user_id"`
+	Id       uint   `json:"id"`
+	Title    string `json:"title"`
+	Caption  string `json:"caption"`
+	PhotoUrl string `json:"photo_url"`
+	UserId   uint   `json:"user_id"`
 }
 type CommentResponse struct {
-	Id         string    `json:"id"`
-	Message    string    `json:"message"`
-	Photo_Id   string    `json:"photo_id"`
-	User_Id    string    `json:"user_id"`
-	Created_at time.Time `json:"created_at"`
-	Updated_at time.Time `json:"updated_at"`
-	User       *User     `json:"user"`
-	Photo      *Photo    `json:"photo"`
+	Id        string    `json:"id"`
+	Message   string    `json:"message"`
+	PhotoId   string    `json:"photo_id"`
+	User_Id   string    `json:"user_id"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
+	User      *User     `json:"user"`
+	Photo     *Photo    `json:"photo"`
 }
 
 func (idb *InDB) CreateComment(ctx *gin.Context) {
@@ -68,7 +68,7 @@ func (idb *InDB) CreateComment(ctx *gin.Context) {
 
 	comment = models.Comment{
 		Message:   commentReq.Message,
-		PhotoId:   commentReq.Photo_Id,
+		PhotoId:   commentReq.PhotoId,
 		CreatedAt: time.Now(),
 		UserId:    uint(userData["id"].(float64)),
 	}
