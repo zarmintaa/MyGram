@@ -16,9 +16,9 @@ type InDB struct {
 }
 
 type PhotoRequest struct {
-	Title     string `json:"title" gorm:"type varchar(191);not null" validate:"required"`
-	Caption   string `json:"caption" gorm:"type varchar(191);not null" validate:"required"`
-	Photo_url string `json:"photo_url" gorm:"type varchar(191);not null" validate:"required"`
+	Title    string `json:"title" gorm:"type varchar(191);not null" validate:"required"`
+	Caption  string `json:"caption" gorm:"type varchar(191);not null" validate:"required"`
+	PhotoUrl string `json:"photo_url" gorm:"type varchar(191);not null" validate:"required"`
 }
 
 type User struct {
@@ -28,13 +28,13 @@ type User struct {
 }
 
 type PhotoResponse struct {
-	Id         uint      `json:"id"`
-	Title      string    `json:"title"`
-	Caption    string    `json:"caption"`
-	User_Id    uint      `json:"user_id"`
-	Created_At time.Time `json:"created_at"`
-	Updated_At time.Time `json:"updated_at"`
-	User       *User     `json:"user"`
+	Id        uint      `json:"id"`
+	Title     string    `json:"title"`
+	Caption   string    `json:"caption"`
+	UserId    uint      `json:"user_id"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
+	User      *User     `json:"user"`
 }
 
 func (idb *InDB) Create(ctx *gin.Context) {
@@ -64,10 +64,10 @@ func (idb *InDB) Create(ctx *gin.Context) {
 	}
 
 	var PhotoModel = models.Photo{
-		Title:     newPhoto.Title,
-		Caption:   newPhoto.Caption,
-		Photo_url: newPhoto.Photo_url,
-		User_id:   userId,
+		Title:    newPhoto.Title,
+		Caption:  newPhoto.Caption,
+		PhotoUrl: newPhoto.PhotoUrl,
+		UserId:   userId,
 	}
 
 	err = idb.DB.Debug().Create(&PhotoModel).Error
@@ -84,9 +84,9 @@ func (idb *InDB) Create(ctx *gin.Context) {
 		"id":         PhotoModel.ID,
 		"title":      PhotoModel.Title,
 		"caption":    PhotoModel.Caption,
-		"photo_url":  PhotoModel.Photo_url,
-		"user_id":    PhotoModel.User_id,
-		"created_at": PhotoModel.Created_at,
+		"photo_url":  PhotoModel.PhotoUrl,
+		"user_id":    PhotoModel.UserId,
+		"created_at": PhotoModel.CreatedAt,
 	})
 }
 
@@ -163,10 +163,10 @@ func (idb *InDB) UpdatePhoto(ctx *gin.Context) {
 	}
 
 	errUpdate := idb.DB.Debug().Table("photos").Model(&photoModel).Where("id = ?", id).Updates(models.Photo{
-		Title:      photo.Title,
-		Caption:    photo.Caption,
-		Photo_url:  photo.Photo_url,
-		Updated_at: time.Now(),
+		Title:     photo.Title,
+		Caption:   photo.Caption,
+		PhotoUrl:  photo.PhotoUrl,
+		UpdatedAt: time.Now(),
 	}).Error
 
 	if errUpdate != nil {
@@ -181,8 +181,8 @@ func (idb *InDB) UpdatePhoto(ctx *gin.Context) {
 		"id":         photoModel.ID,
 		"title":      photoModel.Title,
 		"caption":    photoModel.Caption,
-		"photo_url":  photoModel.Photo_url,
-		"user_id":    photoModel.User_id,
-		"updated_at": photoModel.Updated_at,
+		"photo_url":  photoModel.PhotoUrl,
+		"user_id":    photoModel.UserId,
+		"updated_at": photoModel.UpdatedAt,
 	})
 }

@@ -193,7 +193,7 @@ func (idb *InDB) UpdateUser(ctx *gin.Context) {
 		"email":     UserModel.Email,
 		"username":  UserModel.Username,
 		"age":       UserModel.Age,
-		"update_at": UserModel.Updated_at,
+		"update_at": UserModel.UpdatedAt,
 	})
 }
 

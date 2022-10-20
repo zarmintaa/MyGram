@@ -11,18 +11,18 @@ import (
 )
 
 type SocialMediaRequest struct {
-	Name             string `json:"name" validate:"required,max=50"`
-	Social_media_url string `json:"social_media_url" validate:"required,max=191"`
+	Name           string `json:"name" validate:"required,max=50"`
+	SocialMediaUrl string `json:"social_media_url" validate:"required,max=191"`
 }
 
 type SocialMediaResponse struct {
-	Id               string `json:"id"`
-	Name             string `json:"name"`
-	Social_media_url string `json:"social_media_url"`
-	Created_at       string `json:"created_at"`
-	Updated_at       string `json:"updated_at"`
-	User_id          string `json:"-"`
-	User             *User  `json:"user"`
+	Id             string `json:"id"`
+	Name           string `json:"name"`
+	SocialMediaUrl string `json:"social_media_url"`
+	CreatedAt      string `json:"created_at"`
+	UpdatedAt      string `json:"updated_at"`
+	UserId         string `json:"-"`
+	User           *User  `json:"user"`
 }
 
 func (idb *InDB) CreateSocialMedia(ctx *gin.Context) {
@@ -55,10 +55,10 @@ func (idb *InDB) CreateSocialMedia(ctx *gin.Context) {
 	}
 
 	SocialMedia = models.SocialMedia{
-		Name:             SocialMediaReq.Name,
-		Social_media_url: SocialMediaReq.Social_media_url,
-		Created_at:       time.Now(),
-		User_id:          uint(userData["id"].(float64)),
+		Name:           SocialMediaReq.Name,
+		SocialMediaUrl: SocialMediaReq.SocialMediaUrl,
+		CreatedAt:      time.Now(),
+		UserId:         uint(userData["id"].(float64)),
 	}
 
 	err = idb.DB.Debug().Table("social_media").Create(&SocialMedia).Error
@@ -74,9 +74,9 @@ func (idb *InDB) CreateSocialMedia(ctx *gin.Context) {
 	ctx.JSON(http.StatusCreated, gin.H{
 		"id":               SocialMedia.Id,
 		"message":          SocialMedia.Name,
-		"social_media_url": SocialMedia.Social_media_url,
-		"user_id":          SocialMedia.User_id,
-		"created_at":       SocialMedia.Created_at,
+		"social_media_url": SocialMedia.SocialMediaUrl,
+		"user_id":          SocialMedia.UserId,
+		"created_at":       SocialMedia.CreatedAt,
 	})
 }
 
@@ -125,17 +125,17 @@ func (idb *InDB) UpdateSocialMedia(ctx *gin.Context) {
 	}
 
 	idb.DB.Debug().Table("social_media").Model(&socialMedia).Where("ud = ?", socialMediaId).Updates(models.SocialMedia{
-		Name:             socialMediaRequest.Name,
-		Social_media_url: socialMediaRequest.Social_media_url,
-		Updated_at:       time.Now(),
+		Name:           socialMediaRequest.Name,
+		SocialMediaUrl: socialMediaRequest.SocialMediaUrl,
+		UpdatedAt:      time.Now(),
 	})
 
 	ctx.JSON(http.StatusOK, gin.H{
 		"id":               socialMedia.Id,
 		"name":             socialMedia.Name,
-		"social_media_url": socialMedia.Social_media_url,
-		"user_id":          socialMedia.User_id,
-		"updated_at":       socialMedia.Updated_at,
+		"social_media_url": socialMedia.SocialMediaUrl,
+		"user_id":          socialMedia.UserId,
+		"updated_at":       socialMedia.UpdatedAt,
 	})
 }
 
