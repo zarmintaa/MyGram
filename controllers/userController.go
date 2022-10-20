@@ -25,6 +25,13 @@ func (idb *InDB) Register(ctx *gin.Context) {
 	var newUser RegisterRequest
 	err := ctx.ShouldBindJSON(&newUser)
 
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"result": nil,
+			"err":    err,
+		})
+	}
+
 	valid, trans := helpers.Validate()
 	err = valid.Struct(newUser)
 
@@ -35,13 +42,6 @@ func (idb *InDB) Register(ctx *gin.Context) {
 			"message": errs.Translate(trans),
 		})
 		return
-	}
-
-	if err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{
-			"result": nil,
-			"err":    err,
-		})
 	}
 
 	checkEmailFormat := helpers.EmailFormatValidation(newUser.Email)
@@ -60,12 +60,12 @@ func (idb *InDB) Register(ctx *gin.Context) {
 		Age:      newUser.Age,
 	}
 
-	err = idb.DB.Debug().Create(&User).Error
+	errCreate := idb.DB.Debug().Create(&User).Error
 
-	if err != nil {
+	if errCreate != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{
 			"result": nil,
-			"err":    err,
+			"err":    errCreate.Error(),
 		})
 		return
 	}

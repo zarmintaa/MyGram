@@ -124,11 +124,26 @@ func (idb *InDB) UpdateSocialMedia(ctx *gin.Context) {
 		return
 	}
 
-	idb.DB.Debug().Table("social_media").Model(&socialMedia).Where("ud = ?", socialMediaId).Updates(models.SocialMedia{
+	errGet := idb.DB.Debug().Table("social_media").Model(&socialMedia).Where("id = ?", socialMediaId).Take(&socialMedia).Error
+
+	if errGet != nil {
+		ctx.JSON(http.StatusNotFound, gin.H{
+			"error":   "Error Update",
+			"message": "Unable to find Photo",
+		})
+		return
+	}
+
+	errJson = idb.DB.Debug().Table("social_media").Model(&socialMedia).Where("id = ?", socialMediaId).Updates(models.SocialMedia{
 		Name:           socialMediaRequest.Name,
 		SocialMediaUrl: socialMediaRequest.SocialMediaUrl,
 		UpdatedAt:      time.Now(),
-	})
+	}).Error
+
+	if errJson != nil {
+		ctx.JSON(http.StatusBadRequest, errJson.Error())
+		return
+	}
 
 	ctx.JSON(http.StatusOK, gin.H{
 		"id":               socialMedia.Id,
@@ -141,6 +156,16 @@ func (idb *InDB) UpdateSocialMedia(ctx *gin.Context) {
 
 func (idb *InDB) DeleteSocialMedia(ctx *gin.Context) {
 	socialMediaId := ctx.Param("socialMediaId")
+
+	errGet := idb.DB.Debug().Table("social_media").Where("id = ?", socialMediaId).Take(models.SocialMedia{}).Error
+
+	if errGet != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"message": "Cannot find Social media with id = " + socialMediaId,
+			"error":   errGet.Error(),
+		})
+		return
+	}
 
 	err := idb.DB.Debug().Table("social_media").Where("id = ?", socialMediaId).Delete(models.SocialMedia{}).Error
 

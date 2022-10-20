@@ -37,7 +37,7 @@ type PhotoResponse struct {
 	User      *User     `json:"user"`
 }
 
-func (idb *InDB) Create(ctx *gin.Context) {
+func (idb *InDB) CreatePhoto(ctx *gin.Context) {
 	var newPhoto PhotoRequest
 	err := ctx.ShouldBindJSON(&newPhoto)
 
@@ -90,7 +90,7 @@ func (idb *InDB) Create(ctx *gin.Context) {
 	})
 }
 
-func (idb *InDB) Get(ctx *gin.Context) {
+func (idb *InDB) GetPhoto(ctx *gin.Context) {
 	var photos []PhotoResponse
 
 	errGetUser := idb.DB.Debug().Table("photos").Preload("User").Find(&photos).Error
@@ -131,7 +131,7 @@ func (idb *InDB) UpdatePhoto(ctx *gin.Context) {
 	var photo PhotoRequest
 	var photoModel models.Photo
 
-	id := ctx.Param("id")
+	id := ctx.Param("photoId")
 	errGetPhoto := idb.DB.Debug().Table("photos").Where("id = ?", id).Take(&photoModel).Error
 
 	if errGetPhoto != nil {

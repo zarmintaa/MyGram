@@ -16,7 +16,7 @@ type CommentRequest struct {
 }
 
 type UpdateCommentMessage struct {
-	Message string `json:"message"`
+	Message string `json:"message" validate:"required"`
 }
 
 type Photo struct {
@@ -49,6 +49,7 @@ func (idb *InDB) CreateComment(ctx *gin.Context) {
 		ctx.JSON(400, gin.H{
 			"result": nil,
 			"err":    errBindJson,
+			"data":   commentReq,
 		})
 		return
 	}
@@ -106,14 +107,8 @@ func (idb *InDB) GetComment(c *gin.Context) {
 	c.JSON(http.StatusOK, comments)
 }
 
-func (idb *InDB) Update(ctx *gin.Context) {
-	ctx.JSON(http.StatusOK, gin.H{
-		"Result": "Success to fetch",
-	})
-}
-
 func (idb *InDB) UpdateComment(ctx *gin.Context) {
-	/*var comment models.Comment
+	var comment models.Comment
 	var commentUpdateMsg UpdateCommentMessage
 	var commentId = ctx.Param("commentId")
 
@@ -148,30 +143,19 @@ func (idb *InDB) UpdateComment(ctx *gin.Context) {
 		return
 	}
 
-	errUpdate := idb.DB.Debug().Table("comments").Model(&comment).Where("id = ?", commentId).Updates(models.Comment{
-		Message:    commentUpdateMsg.Message,
-		Updated_at: time.Now(),
+	idb.DB.Debug().Table("comments").Model(&comment).Where("id = ?", commentId).Updates(models.Comment{
+		Message:   commentUpdateMsg.Message,
+		UpdatedAt: time.Now(),
 	})
-
-	if errUpdate != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{
-			"message": "Error to update comments",
-			"err":     errUpdate,
-		})
-		return
-	}
 
 	ctx.JSON(http.StatusOK, gin.H{
 		"id":         comment.ID,
-		"photo_id":   comment.Photo_Id,
+		"photo_id":   comment.PhotoId,
 		"message":    comment.Message,
 		"user_id":    comment.UserId,
-		"updated_at": comment.Updated_at,
-	})*/
-
-	ctx.JSON(http.StatusOK, gin.H{
-		"Result": "Success to fetch",
+		"updated_at": comment.UpdatedAt,
 	})
+
 }
 
 func (idb *InDB) DeleteComment(ctx *gin.Context) {
