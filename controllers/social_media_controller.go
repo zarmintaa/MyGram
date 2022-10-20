@@ -3,6 +3,7 @@ package controllers
 import (
 	"final-project/helpers"
 	"final-project/models"
+	"final-project/utils"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
@@ -10,24 +11,9 @@ import (
 	"time"
 )
 
-type SocialMediaRequest struct {
-	Name           string `json:"name" validate:"required,max=50"`
-	SocialMediaUrl string `json:"social_media_url" validate:"required,max=191"`
-}
-
-type SocialMediaResponse struct {
-	Id             string `json:"id"`
-	Name           string `json:"name"`
-	SocialMediaUrl string `json:"social_media_url"`
-	CreatedAt      string `json:"created_at"`
-	UpdatedAt      string `json:"updated_at"`
-	UserId         string `json:"-"`
-	User           *User  `json:"user"`
-}
-
 func (idb *InDB) CreateSocialMedia(ctx *gin.Context) {
 	var SocialMedia models.SocialMedia
-	var SocialMediaReq SocialMediaRequest
+	var SocialMediaReq utils.SocialMediaRequest
 
 	userData := ctx.MustGet("userData").(jwt.MapClaims)
 
@@ -81,7 +67,7 @@ func (idb *InDB) CreateSocialMedia(ctx *gin.Context) {
 }
 
 func (idb *InDB) GetSocialMedia(ctx *gin.Context) {
-	var listSocialMedia []SocialMediaResponse
+	var listSocialMedia []utils.SocialMediaResponse
 
 	err := idb.DB.Debug().Table("social_media").Preload("User").Find(&listSocialMedia).Error
 
@@ -97,7 +83,7 @@ func (idb *InDB) GetSocialMedia(ctx *gin.Context) {
 }
 
 func (idb *InDB) UpdateSocialMedia(ctx *gin.Context) {
-	var socialMediaRequest SocialMediaRequest
+	var socialMediaRequest utils.SocialMediaRequest
 	var socialMedia models.SocialMedia
 	socialMediaId := ctx.Param("socialMediaId")
 

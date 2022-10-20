@@ -3,6 +3,7 @@ package controllers
 import (
 	"final-project/helpers"
 	"final-project/models"
+	"final-project/utils"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
@@ -10,35 +11,8 @@ import (
 	"time"
 )
 
-type CommentRequest struct {
-	Message string `json:"message" validate:"required,max=191"`
-	PhotoId uint   `json:"photo_id" validate:"required"`
-}
-
-type UpdateCommentMessage struct {
-	Message string `json:"message" validate:"required"`
-}
-
-type Photo struct {
-	Id       uint   `json:"id"`
-	Title    string `json:"title"`
-	Caption  string `json:"caption"`
-	PhotoUrl string `json:"photo_url"`
-	UserId   uint   `json:"user_id"`
-}
-type CommentResponse struct {
-	Id        string    `json:"id"`
-	Message   string    `json:"message"`
-	PhotoId   string    `json:"photo_id"`
-	UserId    string    `json:"user_id"`
-	CreatedAt time.Time `json:"created_at"`
-	UpdatedAt time.Time `json:"updated_at"`
-	User      *User     `json:"user"`
-	Photo     *Photo    `json:"photo"`
-}
-
 func (idb *InDB) CreateComment(ctx *gin.Context) {
-	var commentReq CommentRequest
+	var commentReq utils.CommentRequest
 	var comment models.Comment
 
 	userData := ctx.MustGet("userData").(jwt.MapClaims)
@@ -92,7 +66,7 @@ func (idb *InDB) CreateComment(ctx *gin.Context) {
 }
 
 func (idb *InDB) GetComment(c *gin.Context) {
-	var comments []CommentResponse
+	var comments []utils.CommentResponse
 
 	err := idb.DB.Debug().Table("comments").Preload("User").Preload("Photo").Find(&comments).Error
 
@@ -109,7 +83,7 @@ func (idb *InDB) GetComment(c *gin.Context) {
 
 func (idb *InDB) UpdateComment(ctx *gin.Context) {
 	var comment models.Comment
-	var commentUpdateMsg UpdateCommentMessage
+	var commentUpdateMsg utils.UpdateCommentMessage
 	var commentId = ctx.Param("commentId")
 
 	err := idb.DB.Table("comments").Where("id = ?", commentId).Take(&comment).Error

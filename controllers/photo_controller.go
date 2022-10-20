@@ -3,6 +3,7 @@ package controllers
 import (
 	"final-project/helpers"
 	"final-project/models"
+	"final-project/utils"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
@@ -15,30 +16,8 @@ type InDB struct {
 	DB *gorm.DB
 }
 
-type PhotoRequest struct {
-	Title    string `json:"title" gorm:"type varchar(191);not null" validate:"required"`
-	Caption  string `json:"caption" gorm:"type varchar(191);not null" validate:"required"`
-	PhotoUrl string `json:"photo_url" gorm:"type varchar(191);not null" validate:"required"`
-}
-
-type User struct {
-	Id       uint   `json:"id"`
-	Username string `json:"username" `
-	Email    string `json:"email" `
-}
-
-type PhotoResponse struct {
-	Id        uint      `json:"id"`
-	Title     string    `json:"title"`
-	Caption   string    `json:"caption"`
-	UserId    uint      `json:"user_id"`
-	CreatedAt time.Time `json:"created_at"`
-	UpdatedAt time.Time `json:"updated_at"`
-	User      *User     `json:"user"`
-}
-
 func (idb *InDB) CreatePhoto(ctx *gin.Context) {
-	var newPhoto PhotoRequest
+	var newPhoto utils.PhotoRequest
 	err := ctx.ShouldBindJSON(&newPhoto)
 
 	userData := ctx.MustGet("userData").(jwt.MapClaims)
@@ -91,7 +70,7 @@ func (idb *InDB) CreatePhoto(ctx *gin.Context) {
 }
 
 func (idb *InDB) GetPhoto(ctx *gin.Context) {
-	var photos []PhotoResponse
+	var photos []utils.PhotoResponse
 
 	errGetUser := idb.DB.Debug().Table("photos").Preload("User").Find(&photos).Error
 
@@ -128,7 +107,7 @@ func (idb *InDB) DeletePhoto(ctx *gin.Context) {
 }
 
 func (idb *InDB) UpdatePhoto(ctx *gin.Context) {
-	var photo PhotoRequest
+	var photo utils.PhotoRequest
 	var photoModel models.Photo
 
 	id := ctx.Param("photoId")

@@ -3,26 +3,15 @@ package controllers
 import (
 	"final-project/helpers"
 	"final-project/models"
+	"final-project/utils"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
 	"net/http"
 )
 
-type RegisterRequest struct {
-	Username string `json:"username" gorm:"type varchar(10);unique;not null" validate:"required,lte=100"`
-	Email    string `json:"email" gorm:"type varchar(191);not null;unique" validate:"required,lte=100"`
-	Password string `json:"password"  gorm:"type varchar(191); not null" validate:"required,lte=100"`
-	Age      int    `json:"age" validate:"required,lte=100,gte=8"`
-}
-
-type LoginRequest struct {
-	Email    string `json:"email" gorm:"type varchar(191);not null;unique" validate:"required,lte=100,gte=8"`
-	Password string `json:"password"  gorm:"type varchar(191); not null" validate:"required,lte=100,gte=8"`
-}
-
 func (idb *InDB) Register(ctx *gin.Context) {
-	var newUser RegisterRequest
+	var newUser utils.RegisterRequest
 	err := ctx.ShouldBindJSON(&newUser)
 
 	if err != nil {
@@ -80,7 +69,7 @@ func (idb *InDB) Register(ctx *gin.Context) {
 }
 
 func (idb *InDB) Login(ctx *gin.Context) {
-	var userReq LoginRequest
+	var userReq utils.LoginRequest
 	err := ctx.ShouldBindJSON(&userReq)
 	valid, trans := helpers.Validate()
 	err = valid.Struct(userReq)
@@ -143,7 +132,7 @@ func (idb *InDB) Login(ctx *gin.Context) {
 }
 
 func (idb *InDB) UpdateUser(ctx *gin.Context) {
-	var userRequest LoginRequest
+	var userRequest utils.LoginRequest
 	err := ctx.ShouldBindJSON(&userRequest)
 
 	valid, trans := helpers.Validate()
