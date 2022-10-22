@@ -135,12 +135,21 @@ func (idb *InDB) UpdateComment(ctx *gin.Context) {
 func (idb *InDB) DeleteComment(ctx *gin.Context) {
 	commentId := ctx.Param("commentId")
 
+	errFind := idb.DB.Table("comments").Where("id = ?", commentId).First(models.Comment{}).Error
+
+	if errFind != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{
+			"error":   "Error to delete comment",
+			"message": "Unable to find comment with id = " + commentId,
+		})
+		return
+	}
+
 	err := idb.DB.Table("comments").Where("id = ?", commentId).Delete(models.Comment{}).Error
 
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{
-			"error":   "Error to delete comment",
-			"message": "Unable to find comment with id = " + commentId,
+			"error": "Error to delete comment",
 		})
 		return
 	}

@@ -22,7 +22,6 @@ var (
 )
 
 func StartDB() {
-
 	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable", host, port, user, password, dbname)
 	db, err = gorm.Open(postgres.Open(psqlInfo), &gorm.Config{})
 

@@ -8,6 +8,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
 	"net/http"
+	"net/url"
 	"time"
 )
 
@@ -36,6 +37,15 @@ func (idb *InDB) CreateSocialMedia(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, gin.H{
 			"err":     "Error Validation",
 			"message": errs.Translate(trans),
+		})
+		return
+	}
+
+	_, err = url.ParseRequestURI(SocialMediaReq.SocialMediaUrl)
+
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"error": "invalid type url = ",
 		})
 		return
 	}
@@ -115,7 +125,7 @@ func (idb *InDB) UpdateSocialMedia(ctx *gin.Context) {
 	if errGet != nil {
 		ctx.JSON(http.StatusNotFound, gin.H{
 			"error":   "Error Update",
-			"message": "Unable to find Photo",
+			"message": "Unable to find Photo with id = " + socialMediaId,
 		})
 		return
 	}
@@ -157,8 +167,7 @@ func (idb *InDB) DeleteSocialMedia(ctx *gin.Context) {
 
 	if err != nil {
 		ctx.JSON(http.StatusNotFound, gin.H{
-			"error":   "Error Delete Social",
-			"message": "Cannot find Social Media",
+			"error": "Error Delete Social",
 		})
 		return
 	}

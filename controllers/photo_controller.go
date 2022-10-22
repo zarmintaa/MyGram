@@ -9,6 +9,8 @@ import (
 	"github.com/go-playground/validator/v10"
 	"gorm.io/gorm"
 	"net/http"
+	"net/url"
+	"strings"
 	"time"
 )
 
@@ -40,6 +42,25 @@ func (idb *InDB) CreatePhoto(ctx *gin.Context) {
 			"result": nil,
 			"err":    err,
 		})
+	}
+
+	_, err = url.ParseRequestURI(newPhoto.PhotoUrl)
+
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"error": "invalid url image!",
+		})
+		return
+	}
+
+	typeImg := strings.Contains(newPhoto.PhotoUrl, "jpg") || strings.Contains(newPhoto.PhotoUrl, "png") || strings.Contains(newPhoto.PhotoUrl, "jpeg")
+
+	if !typeImg {
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"error": "type image invalid",
+			"err":   typeImg,
+		})
+		return
 	}
 
 	var PhotoModel = models.Photo{
@@ -95,6 +116,16 @@ func (idb *InDB) GetPhoto(ctx *gin.Context) {
 func (idb *InDB) DeletePhoto(ctx *gin.Context) {
 
 	id := ctx.Param("photoId")
+
+	errGet := idb.DB.Debug().Table("photos").Where("id = ?", id).First(models.Photo{}).Error
+
+	if errGet != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"message": "Can't get photo with id = " + id,
+		})
+		return
+	}
+
 	err := idb.DB.Debug().Table("photos").Where("id = ?", id).Delete(&models.Photo{}).Error
 
 	if err != nil {
@@ -119,8 +150,7 @@ func (idb *InDB) UpdatePhoto(ctx *gin.Context) {
 
 	if errGetPhoto != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{
-			"photo": nil,
-			"err":   errGetPhoto,
+			"message": "Can't find photo with id = " + id,
 		})
 		return
 	}

@@ -53,8 +53,8 @@ func (idb *InDB) Register(ctx *gin.Context) {
 
 	if errCreate != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{
-			"result": nil,
-			"err":    errCreate.Error(),
+			"error": "User already exist!",
+			"err":   errCreate.Error(),
 		})
 		return
 	}
@@ -152,6 +152,15 @@ func (idb *InDB) UpdateUser(ctx *gin.Context) {
 			"result": nil,
 			"err":    err,
 		})
+	}
+
+	checkEmailFormat := helpers.EmailFormatValidation(userRequest.Email)
+
+	if !checkEmailFormat {
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"message": "Email field must a valid format!",
+		})
+		return
 	}
 
 	var UserModel = models.User{
