@@ -92,12 +92,10 @@ func (idb *InDB) CreatePhoto(ctx *gin.Context) {
 
 func (idb *InDB) GetPhoto(ctx *gin.Context) {
 	var photos []dto.PhotoResponse
+	userData := ctx.MustGet("userData").(jwt.MapClaims)
+	userId := uint(userData["id"].(float64))
 
-	errGetUser := idb.DB.Debug().Table("photos").Preload("User").Find(&photos).Error
-
-	/*errGetUser := idb.DB.Debug().Table("photos").Preload("User", func(db *gorm.DB) *gorm.DB {
-		return db.Order("Username DESC").Select("ID", "Username", "Email")
-	}).Find(&photos).Error*/
+	errGetUser := idb.DB.Debug().Table("photos").Where("user_id = ?", userId).Preload("User").Find(&photos).Error
 
 	if errGetUser != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{
