@@ -1,9 +1,9 @@
 package controllers
 
 import (
+	"final-project/dto"
 	"final-project/helpers"
 	"final-project/models"
-	"final-project/utils"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
@@ -12,7 +12,7 @@ import (
 )
 
 func (idb *InDB) CreateComment(ctx *gin.Context) {
-	var commentReq utils.CommentRequest
+	var commentReq dto.CommentRequest
 	var comment models.Comment
 
 	userData := ctx.MustGet("userData").(jwt.MapClaims)
@@ -66,7 +66,7 @@ func (idb *InDB) CreateComment(ctx *gin.Context) {
 }
 
 func (idb *InDB) GetComment(c *gin.Context) {
-	var comments []utils.CommentResponse
+	var comments []dto.CommentResponse
 
 	err := idb.DB.Debug().Table("comments").Preload("User").Preload("Photo").Find(&comments).Error
 
@@ -83,7 +83,7 @@ func (idb *InDB) GetComment(c *gin.Context) {
 
 func (idb *InDB) UpdateComment(ctx *gin.Context) {
 	var comment models.Comment
-	var commentUpdateMsg utils.UpdateCommentMessage
+	var commentUpdateMsg dto.UpdateCommentMessage
 	var commentId = ctx.Param("commentId")
 
 	err := idb.DB.Table("comments").Where("id = ?", commentId).Take(&comment).Error

@@ -1,4 +1,4 @@
-package utils
+package dto
 
 type RegisterRequest struct {
 	Username string `json:"username" gorm:"type varchar(10);unique;not null" validate:"required,lte=100"`

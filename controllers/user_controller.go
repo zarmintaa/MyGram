@@ -1,9 +1,9 @@
 package controllers
 
 import (
+	"final-project/dto"
 	"final-project/helpers"
 	"final-project/models"
-	"final-project/utils"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
@@ -11,7 +11,7 @@ import (
 )
 
 func (idb *InDB) Register(ctx *gin.Context) {
-	var newUser utils.RegisterRequest
+	var newUser dto.RegisterRequest
 	err := ctx.ShouldBindJSON(&newUser)
 
 	if err != nil {
@@ -52,9 +52,9 @@ func (idb *InDB) Register(ctx *gin.Context) {
 	errCreate := idb.DB.Debug().Create(&User).Error
 
 	if errCreate != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{
-			"error": "User already exist!",
-			"err":   errCreate.Error(),
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"message": "User already exist!",
+			"err":     errCreate.Error(),
 		})
 		return
 	}
@@ -69,7 +69,7 @@ func (idb *InDB) Register(ctx *gin.Context) {
 }
 
 func (idb *InDB) Login(ctx *gin.Context) {
-	var userReq utils.LoginRequest
+	var userReq dto.LoginRequest
 	err := ctx.ShouldBindJSON(&userReq)
 	valid, trans := helpers.Validate()
 	err = valid.Struct(userReq)
@@ -132,7 +132,7 @@ func (idb *InDB) Login(ctx *gin.Context) {
 }
 
 func (idb *InDB) UpdateUser(ctx *gin.Context) {
-	var userRequest utils.LoginRequest
+	var userRequest dto.LoginRequest
 	err := ctx.ShouldBindJSON(&userRequest)
 
 	valid, trans := helpers.Validate()

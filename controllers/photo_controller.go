@@ -1,9 +1,9 @@
 package controllers
 
 import (
+	"final-project/dto"
 	"final-project/helpers"
 	"final-project/models"
-	"final-project/utils"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
@@ -19,7 +19,7 @@ type InDB struct {
 }
 
 func (idb *InDB) CreatePhoto(ctx *gin.Context) {
-	var newPhoto utils.PhotoRequest
+	var newPhoto dto.PhotoRequest
 	err := ctx.ShouldBindJSON(&newPhoto)
 
 	userData := ctx.MustGet("userData").(jwt.MapClaims)
@@ -91,7 +91,7 @@ func (idb *InDB) CreatePhoto(ctx *gin.Context) {
 }
 
 func (idb *InDB) GetPhoto(ctx *gin.Context) {
-	var photos []utils.PhotoResponse
+	var photos []dto.PhotoResponse
 
 	errGetUser := idb.DB.Debug().Table("photos").Preload("User").Find(&photos).Error
 
@@ -142,7 +142,7 @@ func (idb *InDB) DeletePhoto(ctx *gin.Context) {
 }
 
 func (idb *InDB) UpdatePhoto(ctx *gin.Context) {
-	var photo utils.PhotoRequest
+	var photo dto.PhotoRequest
 	var photoModel models.Photo
 
 	id := ctx.Param("photoId")
